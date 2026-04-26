@@ -122,11 +122,16 @@ static int64_t icount_get_raw_locked(void)
     return qatomic_read_i64(&timers_state.qemu_icount);
 }
 
+#define QEMU_TIME_FACTOR 10
+
 static int64_t icount_get_locked(void)
 {
     int64_t icount = icount_get_raw_locked();
-    return qatomic_read_i64(&timers_state.qemu_icount_bias) +
+    int64_t ns = qatomic_read_i64(&timers_state.qemu_icount_bias) +
         icount_to_ns(icount);
+
+    /* Scale virtual time by QEMU_TIME_FACTOR times */
+    return ns * QEMU_TIME_FACTOR;
 }
 
 int64_t icount_get_raw(void)

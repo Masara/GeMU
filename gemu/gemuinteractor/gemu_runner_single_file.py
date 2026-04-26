@@ -29,6 +29,7 @@ class GemuRunner:
         ]
 
         params = [
+            "-icount shift=0,sleep=off",
             "-m", vm_config.ram_size,
             "-monitor stdio",
             *vm_config.additional_parameters,
