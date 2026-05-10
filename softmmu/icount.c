@@ -39,6 +39,7 @@
 #include "sysemu/cpu-timers.h"
 #include "sysemu/cpu-throttle.h"
 #include "timers-state.h"
+#include "sysemu/time_dilation.h"
 
 /*
  * ICOUNT: Instruction Counter
@@ -56,6 +57,10 @@ static bool icount_sleep = true;
  * 2 = Runtime adaptive algorithm to compute shift
  */
 int use_icount;
+
+/* Time dialation factor */
+#define QEMU_TIME_FACTOR 20
+int time_dilation_active = 0;
 
 static void icount_enable_precise(void)
 {
@@ -122,16 +127,17 @@ static int64_t icount_get_raw_locked(void)
     return qatomic_read_i64(&timers_state.qemu_icount);
 }
 
-#define QEMU_TIME_FACTOR 10
-
 static int64_t icount_get_locked(void)
 {
     int64_t icount = icount_get_raw_locked();
-    int64_t ns = qatomic_read_i64(&timers_state.qemu_icount_bias) +
-        icount_to_ns(icount);
+    int64_t ns = qatomic_read_i64(&timers_state.qemu_icount_bias) + icount_to_ns(icount);
 
-    /* Scale virtual time by QEMU_TIME_FACTOR times */
-    return ns * QEMU_TIME_FACTOR;
+    if (qatomic_read(&time_dilation_active)) {
+        /* Scale virtual time by QEMU_TIME_FACTOR times */
+        return ns * QEMU_TIME_FACTOR;
+    }
+
+    return ns;
 }
 
 int64_t icount_get_raw(void)

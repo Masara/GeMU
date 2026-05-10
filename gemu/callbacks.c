@@ -11,6 +11,7 @@
 #include "monitor/monitor.h"
 #include "gemu/xxhash64.h"
 #include "qemu/xxhash.h"
+#include "sysemu/time_dilation.h"
 
 bool gemu_use_memcb = false;
 bool gemu_use_exec = false;
@@ -222,6 +223,10 @@ void gemu_cb_before_tb_exec(CPUState *cpu, TranslationBlock *tb, bool is_chained
         // Exit early if the current program is not the one we want to watch
         return;
     }
+
+    // Activate time dilation, if sample was run and --speedup flag was used
+    qatomic_set(&time_dilation_active, 1);
+
     QWORD processid;
     QWORD threadid;
     get_current_pid_and_tid(cpu, &processid, &threadid, process);
