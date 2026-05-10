@@ -10,9 +10,9 @@ from gemuinteractor.gemu_run_decorator import RunDecorator
 
 class GemuRunner:
     def __init__(self, recording_time: int, trackingmode: str|None, dotnet: str|None, vm_config: VMConfig, recipe: Recipe,
-                 gemu_instance: GemuInstance, codecarver: bool = False, tracing: bool = False):
+                 gemu_instance: GemuInstance, codecarver: bool = False, tracing: bool = False, speedup: bool = False):
         self.recipe = recipe
-        self.gemu_cmd = self._get_gemu_params(dotnet, trackingmode, tracing, vm_config, codecarver)
+        self.gemu_cmd = self._get_gemu_params(dotnet, trackingmode, tracing, vm_config, codecarver, speedup)
         self.recording_time = recording_time
         self.gemu_instance = gemu_instance
         self._decorators: list[RunDecorator] = []
@@ -20,16 +20,16 @@ class GemuRunner:
     def decorate_run(self, decorators: list[RunDecorator]):
         self._decorators = decorators
 
-    def _get_gemu_params(self, dotnet:str|None, trackingmode:str|None, tracing: bool, vm_config: VMConfig, codecarver: bool) -> str:
+    def _get_gemu_params(self, dotnet:str|None, trackingmode:str|None, tracing: bool, vm_config: VMConfig, codecarver: bool, speedup: bool) -> str:
         optional_parameters = [
             "-trackingmode " + trackingmode if trackingmode else "",
             "-dotnet " + dotnet if dotnet else "",
             "-gemutracing" if tracing else "",
             "-codecarver" if codecarver else "",
+            "-icount shift=0,sleep=off" if speedup else "",  # Activates the usage of the icount_get_locked c-function which is used for the VM time speedup
         ]
 
         params = [
-            "-icount shift=0,sleep=off",
             "-m", vm_config.ram_size,
             "-monitor stdio",
             *vm_config.additional_parameters,

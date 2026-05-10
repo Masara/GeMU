@@ -26,6 +26,7 @@ def unpack_single_file(
     codecarver: bool = False,
     tracing: bool = False,
     postprocess: bool = True,
+    speedup: bool = False,
 ) -> AnalysisFolder:
     vm_config = get_vm_settings(config)
 
@@ -42,6 +43,7 @@ def unpack_single_file(
         recipe=recipe_obj,
         codecarver=codecarver,
         tracing=tracing,
+        speedup=speedup,
     )
 
     decorators: list[RunDecorator] = [WrittenFileMerger(sleep=2, gemu_instance=gemu_instance)]
@@ -109,6 +111,8 @@ def cli_main() -> None:
         action=argparse.BooleanOptionalAction,
         default=True,
     )
+    parser.add_argument("--speedup", help="Activate VM time speedup", action="store_true", default=False)
+
 
     args = parser.parse_args()
 
@@ -125,6 +129,7 @@ def cli_main() -> None:
         codecarver=args.codecarver,
         tracing=args.tracing,
         postprocess=args.postprocess,
+        speedup=args.speedup,
     )
 
 
