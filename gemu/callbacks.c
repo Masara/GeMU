@@ -224,7 +224,7 @@ void gemu_cb_before_tb_exec(CPUState *cpu, TranslationBlock *tb, bool is_chained
         return;
     }
 
-    // Activate time dilation, if sample was run and --speedup flag was used
+    // Activate time dilation, if sample application was startet and --speedup flag was used
     qatomic_set(&time_dilation_active, 1);
 
     QWORD processid;

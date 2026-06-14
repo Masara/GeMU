@@ -3,8 +3,6 @@
 
 #include "qemu/atomic.h"
 
-#define QEMU_TIME_FACTOR 20
-
 /*
  * Set to 1 when malware process is detected, 0 otherwise.
  */
