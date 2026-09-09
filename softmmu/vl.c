@@ -134,6 +134,7 @@
 #include "sysemu/iothread.h"
 #include "qemu/guest-random.h"
 #include "qemu/keyval.h"
+#include "sysemu/time_dilation.h"
 
 #define MAX_VIRTIO_CONSOLES 1
 
@@ -3262,6 +3263,12 @@ void qemu_init(int argc, char **argv)
                 break;
             case QEMU_OPTION_gemutracing:
                 gemu_use_tracing = true;
+                break;
+            case QEMU_OPTION_time_dilation_factor:
+                qemu_time_dilation_factor = atoi(optarg);
+                if (qemu_time_dilation_factor <= 0) {
+                    qemu_time_dilation_factor = 1;
+                }
                 break;
             case QEMU_OPTION_win2k_hack:
                 win2k_install_hack = 1;

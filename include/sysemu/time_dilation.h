@@ -8,4 +8,9 @@
  */
 extern int time_dilation_active;
 
+/*
+ * Dynamic time dilation factor passed via command line (default: 1)
+ */
+extern int qemu_time_dilation_factor;
+
 #endif /* TIME_DILATION_H */

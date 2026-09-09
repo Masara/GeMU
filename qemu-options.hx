@@ -5661,6 +5661,13 @@ SRST
     It causes GeMU to print a line per each executed basic block in the infected processes.
 ERST
 
+DEF("time-dilation-factor", HAS_ARG, QEMU_OPTION_time_dilation_factor, \
+    "-time-dilation-factor factor    Set time dilation factor for GeMU (default: 1)\n", QEMU_ARCH_ALL)
+SRST
+``-time-dilation-factor factor``
+    Set the time dilation factor used when time acceleration is triggered.
+ERST
+
 HXCOMM This is the last statement. Insert new options before this line!
 
 #undef DEF

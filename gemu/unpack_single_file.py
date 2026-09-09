@@ -26,7 +26,7 @@ def unpack_single_file(
     codecarver: bool = False,
     tracing: bool = False,
     postprocess: bool = True,
-    speedup: bool = False,
+    speedup: int = 0,
 ) -> AnalysisFolder:
     vm_config = get_vm_settings(config)
 
@@ -111,7 +111,7 @@ def cli_main() -> None:
         action=argparse.BooleanOptionalAction,
         default=True,
     )
-    parser.add_argument("--speedup", help="Activate VM time speedup", action="store_true", default=False)
+    parser.add_argument("--speedup", help="Time dilation factor", type=int, default=1)
 
 
     args = parser.parse_args()

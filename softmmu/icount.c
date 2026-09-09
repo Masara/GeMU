@@ -59,8 +59,8 @@ static bool icount_sleep = true;
 int use_icount;
 
 /* Time dialation factor */
-#define QEMU_TIME_FACTOR 20
 int time_dilation_active = 0;
+int qemu_time_dilation_factor = 1;
 
 static void icount_enable_precise(void)
 {
@@ -133,8 +133,9 @@ static int64_t icount_get_locked(void)
     int64_t ns = qatomic_read_i64(&timers_state.qemu_icount_bias) + icount_to_ns(icount);
 
     if (qatomic_read(&time_dilation_active)) {
-        /* Scale virtual time by QEMU_TIME_FACTOR times */
-        return ns * QEMU_TIME_FACTOR;
+        /* Scale virtual time with the time dilation factor */
+        int factor = qatomic_read(&qemu_time_dilation_factor);
+        return ns * factor;
     }
 
     return ns;
